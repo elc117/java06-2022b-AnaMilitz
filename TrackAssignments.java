@@ -7,12 +7,19 @@ class Assignment {
   protected String description;
   protected boolean pending;
   protected LocalDate submitDate;
-  
+
+
   public Assignment(LocalDate dueDate, String description) {
     this.dueDate = dueDate;
     this.description = description;
     this.submitDate = null;
     this.pending = true;
+  }
+
+  @Override
+	public String toString() {
+  return "{ " + "dueDate= " + "'" + this.dueDate + "'" +  ",  description= " + "'" +  this.description + "'" + 
+			   ", pending= " + "'" + this.pending  + "'" + ", submitDate= " +  "'" + this.submitDate + "'" + " }";
   }
 
   public String getDescription() {
@@ -34,17 +41,21 @@ class Assignment {
     return dueDate.compareTo(LocalDate.now());
   }
 
-  private String status() {
-
-    if (isPending() == false){
-        return "done";
-    }
-    else if (isPending())
+  public String status() {
+    if (!pending)
     {
-        return "late";
+       return "done";
     }
-    else if (isPending() && daysLeft()){
-        return "due in x days";
+    else if (pending & daysLeft() < 0)
+    {
+      return "late";
+    }
+    else if (daysLeft() >= 0 & pending )
+    {
+        return "due in" + daysLeft() + "days";
+    }
+    else{
+      return "";
     }
   }
 
@@ -54,9 +65,7 @@ class Assignment {
     
   }
 
-public String toString() {
-    return " Due date= " + dueDate + " Description= " + description + " Pending= " + pending + " submitDate= " + submitDate;
-}
+  
 
 }
 
@@ -64,8 +73,14 @@ class GroupAssignment extends Assignment {
   private String teamMates;
 
   public String message() {
-    return "COMPLETE-ME";
-  
+    if (status() == "done")
+    {
+       return "Group Assignment " + this.description + " is " + status();
+    }
+    else{
+       return "Group Assignment " + this.description + " is " + status() + " - call " + this.teamMates;
+    }  
+    
   }
 
   public GroupAssignment(LocalDate dueDate, String description, String teamMates) {
@@ -108,7 +123,14 @@ public class TrackAssignments {
       System.out.println(item.message());
     }
 
-    // COMPLETE-ME: count completed assignments
+    int count = 0;
+    for (Assignment item : list) {
+      if (item.status() == "done")
+      {
+        count++;
+      }
+    }
+    System.out.println("\n==> Completed assignments: " + count);
   }
   
 }
